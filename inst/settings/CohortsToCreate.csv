@@ -1,0 +1,6 @@
+"atlasId","atlasName","cohortId","name"
+3519,"[EMA COVID19] 1: Main definition",0,"1__main_definition"
+3520,"[EMA COVID19] 2: Diagnosis confirmed",1,"2__diagnosis_confirmed"
+3521,"[EMA COVID19] 3: Lab confirmed",2,"3__lab_confirmed"
+3522,"[EMA COVID19] 4: Symptomatic",3,"4__symptomatic"
+3523,"[EMA COVID19] 5: Suspected",4,"5__suspected"
