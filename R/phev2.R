@@ -103,3 +103,33 @@ extract_bitsum <- function(x, bit_names) {
   return(str_c(bit_names[rev(combination)], collapse=" + "))
   
 }
+
+exportPhenoResults <- function(outputFolder){
+    
+    lapply(
+      c("diagnosis_or_lab_test.rds","diagnosis.rds","lab_test.rds","suspected.rds","symptpmatic.rds"),
+      function(x){
+        if(!file.exists(file.path(outputFolder,x))){return(NULL)}
+        tmp <- readRDS(file.path(outputFolder,x))
+        write.csv(tmp, file.path(outputFolder,stringr::str_c(stringr::str_remove(x,"\\.rds"),".csv")))
+        
+      })
+    
+    files <- c("CohortCountsBase.csv",
+               "CohortCounts.csv",
+               "cohortOverlap.csv",
+               "monthlyCohortCounts.csv",
+               "diagnosis_or_lab_test.csv",
+               "diagnosis.csv",
+               "lab_test.csv",
+               "suspected.csv",
+               "symptpmatic.csv",
+               "EvaluationCohort_e1/plpResults_main/performanceEvaluation.rds"
+    )
+    
+    
+    file.exists(file.path(outputFolder,files))
+    
+    zip::zip(zipfile = file.path(outputFolder,"output_phenotypes.zip"), file.path(outputFolder,files)[file.exists(file.path(outputFolder,files))])
+    
+  }

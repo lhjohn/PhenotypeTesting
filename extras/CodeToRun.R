@@ -43,3 +43,6 @@ covidPhenotypesTest::runPhenoTest(
   runPhevaluator = T,
   minCellCount = 5
 )
+
+## Export summary results to share with Iqvia
+exportPhenoResults(outputFolder)
