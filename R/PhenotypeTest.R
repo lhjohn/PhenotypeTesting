@@ -58,63 +58,89 @@ runPhenoTest <- function(connectionDetails,
                          databaseName = "Unknown",
                          databaseDescription = "Unknown",
                          createCohorts = TRUE,
+                         createBaseCohorts = TRUE,
                          runSimpleMonthly = TRUE,
                          runOverlap = TRUE,
+                         runPhevaluator = TRUE,
                          minCellCount = 5) {
+  
   if (!file.exists(outputFolder))
     dir.create(outputFolder, recursive = TRUE)
-  
-  ParallelLogger::addDefaultFileLogger(file.path(outputFolder, "log.txt"))
-  ParallelLogger::addDefaultErrorReportLogger(file.path(outputFolder, "errorReportR.txt"))
-  on.exit(ParallelLogger::unregisterLogger("DEFAULT_FILE_LOGGER", silent = TRUE))
-  on.exit(ParallelLogger::unregisterLogger("DEFAULT_ERRORREPORT_LOGGER", silent = TRUE), add = TRUE)
+
+  connection <- DatabaseConnector::connect(connectionDetails)
   
   if (createCohorts) {
     ParallelLogger::logInfo("Creating cohorts")
-    connection <- DatabaseConnector::connect(connectionDetails)
     .createCohorts(connection = connection,
                    cdmDatabaseSchema = cdmDatabaseSchema,
                    cohortDatabaseSchema = cohortDatabaseSchema,
                    cohortTable = cohortTable,
                    oracleTempSchema = oracleTempSchema,
                    outputFolder = outputFolder)
-    DatabaseConnector::disconnect(connection)
+  }
+  
+  if (createBaseCohorts) {
+    ParallelLogger::logInfo("Creating base cohorts")
+    .createBaseCohorts(connection = connection,
+                   cdmDatabaseSchema = cdmDatabaseSchema,
+                   cohortDatabaseSchema = cohortDatabaseSchema,
+                   cohortTable = cohortTable,
+                   oracleTempSchema = oracleTempSchema,
+                   outputFolder = outputFolder)
   }
   
   if(runSimpleMonthly){
     
-    connection <- DatabaseConnector::connect(connectionDetails)
+    message("Calculating phenotype incidence over time")
     sql <- SqlRender::loadRenderTranslateSql(sqlFilename = "MonthlyCounts.sql",
                                              packageName = "covidPhenotypesTest",
                                              dbms = attr(connection, "dbms"),
                                              oracleTempSchema = oracleTempSchema,
                                              cohort_database_schema = cohortDatabaseSchema,
-                                             cohort_table = cohortTable)
+                                             cohort_table = cohortTable,
+                                             limit_criteria = 'cohort_definition_id IN (2, 4, 6, 8, 10)')
     
     counts <- DatabaseConnector::querySql(connection, sql)
     names(counts) <- SqlRender::snakeCaseToCamelCase(names(counts))
     counts$countPersons[counts$countPersons < minCellCount] <- -minCellCount
     write.csv(counts, file.path(outputFolder, "MonthlyCohortCounts.csv"))
-    DatabaseConnector::disconnect(connection)
-    
+
   }
   
   if(runOverlap){
     
-    connection <- DatabaseConnector::connect(connectionDetails)
+    message("Calculating phenotype overlap")
     sql <- SqlRender::loadRenderTranslateSql(sqlFilename = "OverlapCounts.sql",
                                              packageName = "covidPhenotypesTest",
                                              dbms = attr(connection, "dbms"),
                                              oracleTempSchema = oracleTempSchema,
                                              cohort_database_schema = cohortDatabaseSchema,
-                                             cohort_table = cohortTable)
-    
+                                             cohort_table = cohortTable,
+                                             limit_criteria = 'cohort_definition_id IN (1, 3, 5, 7, 9)')
     counts <- DatabaseConnector::querySql(connection, sql)
     names(counts) <- SqlRender::snakeCaseToCamelCase(names(counts))
     counts$countPersons[counts$countPersons < minCellCount] <- -minCellCount
+    
+    pathToCsv <- system.file("settings", "CohortsToCreate.csv", package = "covidPhenotypesTest")
+    cohortsToCreate <- readr::read_csv(pathToCsv, col_types = readr::cols())
+    
+    counts <- counts %>% 
+      mutate(combinationName = map_chr(comboId, ~extract_bitsum(.x, str_remove(cohortsToCreate$name, '_ema_phenos__'))))
+    
     write.csv(counts, file.path(outputFolder, "CohortOverlap.csv"))
-    DatabaseConnector::disconnect(connection)
+
+  }
+  
+  if(runPhevaluator){
+    
+    prevalence <- estimate_prevalence_2020(connection, cohortDatabaseSchema, cohortTable)
+    
+    prevalence <- round(max(c(prevalence,0.05),na.rm=T),3)
+    
+    run_phevaluator_covid(connection = connection, prevalence, cdmDatabaseSchema = cdmDatabaseSchema, cohortDatabaseSchema = cohortDatabaseSchema, cohortTable = cohortTable, outputFolder = outputFolder)
     
   }
 
+    DatabaseConnector::disconnect(connection)
+  
 }

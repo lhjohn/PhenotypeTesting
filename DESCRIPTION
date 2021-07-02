@@ -1,19 +1,28 @@
 Package: covidPhenotypesTest
 Type: Package
-Title: A Package Skeleton for Cohort Diagnostics
+Title: A  package to test COVID19 Phenotypes
 Version: 0.0.1
-Author: Martijn Schuemie [aut, cre]
-Maintainer: Martijn J. Schuemie <schuemie@ohdsi.org>
-Description: A skeleton package, to be used as a starting point when you just want to run cohort diagnostics.
+Author: Henry Morgan Stewart [aut, cre]
+Maintainer: Emanuil Markov <schuemie@ohdsi.org>
+Description: A  package to test COVID19 Phenotypes
 Depends:
-    DatabaseConnector (>= 2.2.0)
+    DatabaseConnector (>= 2.2.0),
+    CohortDiagnostics,
+    PheValuator,
+    PatientLevelPrediction,
+    FeatureExtraction,
+    dplyr,
+    purrr,
+    stringr
 Imports:
-	CohortDiagnostics
+	CohortDiagnostics,
+	PheValuator,
+	dplyr,
+    purrr,
+    stringr
 Suggests:
     knitr,
-    rmarkdown,
-    ROhdsiWebApi,
-    OhdsiRTools
+    rmarkdown
 License: Apache License 2.0
 VignetteBuilder: knitr
 LazyData: TRUE

@@ -15,8 +15,10 @@ runPhenoTest(
   databaseName = "Unknown",
   databaseDescription = "Unknown",
   createCohorts = TRUE,
+  createBaseCohorts = TRUE,
   runSimpleMonthly = TRUE,
   runOverlap = TRUE,
+  runPhevaluator = TRUE,
   minCellCount = 5
 )
 }

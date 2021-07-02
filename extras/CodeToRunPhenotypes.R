@@ -6,24 +6,22 @@ library(covidPhenotypesTest)
 
 options(andromedaTempFolder = "~/tmp")
 
-outputFolder <- 
-
 # Details for connecting to the server:
-connectionDetails <- DatabaseConnector::createConnectionDetails(
-  dbms = ,
-  server = ,
-  user = ,
-  password = ,
-  port = ,
-  pathToDriver = )
+connectionDetails <- DatabaseConnector::createConnectionDetails(dbms = "redshift",
+                                                                server = Sys.getenv(str_c(i,"_SERVERDB")),
+                                                                user = Sys.getenv("REDSHIFT_USER"),
+                                                                password = Sys.getenv("REDSHIFT_PASSWORD"),
+                                                                port = 5439,
+                                                                pathToDriver = "~/drivers")
 
 # For Oracle: define a schema that can be used to emulate temp tables:
 oracleTempSchema <- NULL
 
 # Details specific to the database:
-cdmDatabaseSchema <- 
-cohortDatabaseSchema <- 
-cohortTable <- 
+outputFolder <- file.path(getwd(),str_c("output_",i))
+cdmDatabaseSchema <- Sys.getenv(str_c(i,"_SCHEMA"))
+cohortDatabaseSchema <- "study_reference"
+cohortTable <- "covid_phenos_test"
 
 # Run phenotype analysis
 covidPhenotypesTest::runPhenoTest(

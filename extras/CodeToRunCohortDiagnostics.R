@@ -6,8 +6,6 @@ library(covidPhenotypesTest)
 
 options(andromedaTempFolder = "~/tmp")
 
-outputFolder <- 
-
 # Details for connecting to the server:
 connectionDetails <- DatabaseConnector::createConnectionDetails(
   dbms = ,
@@ -21,25 +19,27 @@ connectionDetails <- DatabaseConnector::createConnectionDetails(
 oracleTempSchema <- NULL
 
 # Details specific to the database:
+outputFolder <- 
 cdmDatabaseSchema <- 
 cohortDatabaseSchema <- 
 cohortTable <- 
 
-# Run phenotype analysis
-covidPhenotypesTest::runPhenoTest(
+options(sqlRenderTempEmulationSchema = NULL)
+
+databaseId = 
+databaseName = 
+databaseDescription = 
+
+execute(
   connectionDetails = connectionDetails,
   cdmDatabaseSchema = cdmDatabaseSchema,
   cohortDatabaseSchema = cohortDatabaseSchema,
   cohortTable = cohortTable,
-  oracleTempSchema = oracleTempSchema,
   outputFolder = outputFolder,
   databaseId = databaseId,
   databaseName = databaseName,
-  databaseDescription = databaseDescription,
-  createCohorts = T,
-  createBaseCohorts = T,
-  runSimpleMonthly = T,
-  runOverlap = T,
-  runPhevaluator = T,
-  minCellCount = 5
+  databaseDescription = databaseDescription
 )
+
+CohortDiagnostics::preMergeDiagnosticsFiles(dataFolder = outputFolder)
+CohortDiagnostics::launchDiagnosticsExplorer(dataFolder = outputFolder)

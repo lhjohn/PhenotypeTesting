@@ -2,7 +2,7 @@ with
 cte as (
  select distinct subject_id, cohort_definition_id
  from @cohort_database_schema.@cohort_table
- where cohort_start_date >= datefromparts(2019, 12, 01)
+ where @limit_criteria
  ),
 cte2 as (
  select subject_id, cast(sum(power(cast(2 as bigint), cohort_definition_id)) as bigint) as combo_id
