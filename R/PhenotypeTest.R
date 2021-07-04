@@ -89,6 +89,18 @@ runPhenoTest <- function(connectionDetails,
                    outputFolder = outputFolder)
   }
   
+  # Fetch cohort counts:
+  sql <- "SELECT cohort_definition_id, COUNT(*) AS count FROM @cohort_database_schema.@cohort_table GROUP BY cohort_definition_id"
+  sql <- SqlRender::render(sql,
+                           cohort_database_schema = cohortDatabaseSchema,
+                           cohort_table = cohortTable)
+  sql <- SqlRender::translate(sql, targetDialect = attr(connection, "dbms"))
+  counts <- DatabaseConnector::querySql(connection, sql)
+  names(counts) <- SqlRender::snakeCaseToCamelCase(names(counts))
+  counts <- merge(counts, data.frame(cohortDefinitionId = cohortsToCreate$cohortId,
+                                     cohortName  = cohortsToCreate$name))
+  write.csv(counts, file.path(outputFolder, "CohortCounts.csv"))
+  
   if(runSimpleMonthly){
     
     message("Calculating phenotype incidence over time")

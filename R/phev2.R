@@ -28,12 +28,16 @@ run_phevaluator_covid <- function(connection, prevalence, cdmDatabaseSchema, coh
                             SqlRender::render("SELECT distinct visit_concept_id FROM @cdm_database_schema.visit_occurrence", cdm_database_schema = cdmDatabaseSchema),
                             snakeCaseToCamelCase=T)
   
-  excludedCovariateConceptIds <-  c(37311061, 756055)
+  excludedCovariateConceptIds <-  c(37311061, 4100065, 756055, 439676, 37311060)
   
   covSettingsAcute <- createDefaultAcuteCovariateSettings(
     excludedCovariateConceptIds = excludedCovariateConceptIds,
-    addDescendantsToExclude = T
+    addDescendantsToExclude = T,
   )
+  
+  covSettingsAcute[[1]]$VisitCountLongTerm  <- F
+  covSettingsAcute[[2]]$VisitCountShortTerm <- F
+  covSettingsAcute[[3]]$VisitCountMediumTerm <- F
   
   covSettingsAcute[[1]]$longTermStartDays <- -28
   covSettingsAcute[[1]]$endDays <- -8
@@ -41,7 +45,7 @@ run_phevaluator_covid <- function(connection, prevalence, cdmDatabaseSchema, coh
   covSettingsAcute[[2]]$shortTermStartDays <- -7
   covSettingsAcute[[2]]$endDays <- 7
   
-  covSettingsAcute[[3]]$mediumTermStartDays <- -8
+  covSettingsAcute[[3]]$mediumTermStartDays <- 8
   covSettingsAcute[[3]]$endDays <- 28
   
   cohortArgsAcute <- createCreateEvaluationCohortArgs(
