@@ -90,6 +90,8 @@ runPhenoTest <- function(connectionDetails,
   }
   
   # Fetch cohort counts:
+  pathToCsv <- system.file("settings", "CohortsToCreate.csv", package = "covidPhenotypesTest")
+  cohortsToCreate <- readr::read_csv(pathToCsv, col_types = readr::cols())
   sql <- "SELECT cohort_definition_id, COUNT(*) AS count FROM @cohort_database_schema.@cohort_table GROUP BY cohort_definition_id"
   sql <- SqlRender::render(sql,
                            cohort_database_schema = cohortDatabaseSchema,
