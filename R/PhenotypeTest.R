@@ -89,6 +89,7 @@ runPhenoTest <- function(connectionDetails,
                    outputFolder = outputFolder)
   }
   
+  
   # Fetch cohort counts:
   pathToCsv <- system.file("settings", "CohortsToCreate.csv", package = "covidPhenotypesTest")
   cohortsToCreate <- readr::read_csv(pathToCsv, col_types = readr::cols())
@@ -118,6 +119,17 @@ runPhenoTest <- function(connectionDetails,
     names(counts) <- SqlRender::snakeCaseToCamelCase(names(counts))
     counts$countPersons[counts$countPersons < minCellCount] <- -minCellCount
     write.csv(counts, file.path(outputFolder, "MonthlyCohortCounts.csv"))
+    
+        sql <- SqlRender::loadRenderTranslateSql(sqlFilename = "MonthlyDenominators.sql",
+                                             packageName = "covidPhenotypesTest",
+                                             dbms = attr(connection, "dbms"),
+                                             oracleTempSchema = oracleTempSchema,
+                                             cdm_database_schema = cdmDatabaseSchema)
+    
+    counts <- DatabaseConnector::querySql(connection, sql)
+    names(counts) <- SqlRender::snakeCaseToCamelCase(names(counts))
+    counts$countPersons[counts$countPersons < minCellCount] <- -minCellCount
+    write.csv(counts, file.path(outputFolder, "MonthlyDenominators.csv"))
 
   }
   

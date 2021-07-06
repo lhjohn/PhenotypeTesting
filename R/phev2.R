@@ -28,16 +28,16 @@ run_phevaluator_covid <- function(connection, prevalence, cdmDatabaseSchema, coh
                             SqlRender::render("SELECT distinct visit_concept_id FROM @cdm_database_schema.visit_occurrence", cdm_database_schema = cdmDatabaseSchema),
                             snakeCaseToCamelCase=T)
   
-  excludedCovariateConceptIds <-  c(37311061, 4100065, 756055, 439676, 37311060)
+  excludedCovariateConceptIds <-  c(37311061, 4100065, 756055, 439676, 37311060, 704996, 704995) #704995/6 should potentially be in main definition? 
   
   covSettingsAcute <- createDefaultAcuteCovariateSettings(
     excludedCovariateConceptIds = excludedCovariateConceptIds,
     addDescendantsToExclude = T,
   )
   
-  covSettingsAcute[[1]]$VisitCountLongTerm  <- F
-  covSettingsAcute[[2]]$VisitCountShortTerm <- F
-  covSettingsAcute[[3]]$VisitCountMediumTerm <- F
+  covSettingsAcute[[1]]$VisitConceptCountLongTerm  <- F
+  covSettingsAcute[[2]]$VisitConceptCountShortTerm <- F
+  covSettingsAcute[[3]]$VisitConceptCountMediumTerm <- F
   
   covSettingsAcute[[1]]$longTermStartDays <- -28
   covSettingsAcute[[1]]$endDays <- -8
@@ -111,23 +111,34 @@ extract_bitsum <- function(x, bit_names) {
 exportPhenoResults <- function(outputFolder){
     
     lapply(
-      c("diagnosis_or_lab_test.rds","diagnosis.rds","lab_test.rds","suspected.rds","symptpmatic.rds"),
+      c("EvaluationCohort_e1/model_main.rds"),
       function(x){
-        if(!file.exists(file.path(outputFolder,x))){return(NULL)}
-        tmp <- readRDS(file.path(outputFolder,x))
-        write.csv(tmp, file.path(outputFolder,stringr::str_c(stringr::str_remove(x,"\\.rds"),".csv")))
-        
+        if(!file.exists(file.path(outputFolder,x)) | is.null(readRDS(file.path(outputFolder,x))[["covariateSummary"]])){return(NULL)}
+        tmp <- readRDS(file.path(outputFolder,x))[["covariateSummary"]] %>%
+          filter(covariateValue != 0)
+        write.csv(tmp, file.path(outputFolder,"covariates.csv"))
       })
+  
+  lapply(
+    c("diagnosis_or_lab_test.rds","diagnosis.rds","lab_test.rds","suspected.rds","symptpmatic.rds"),
+    function(x){
+      if(!file.exists(file.path(outputFolder,x))){return(NULL)}
+      tmp <- readRDS(file.path(outputFolder,x))
+      write.csv(tmp, file.path(outputFolder,stringr::str_c(stringr::str_remove(x,"\\.rds"),".csv")))
+      
+    })
     
     files <- c("CohortCountsBase.csv",
                "CohortCounts.csv",
-               "cohortOverlap.csv",
-               "monthlyCohortCounts.csv",
+               "CohortOverlap.csv",
+               "MonthlyDenominators.csv",
+               "MonthlyCohortCounts.csv",
                "diagnosis_or_lab_test.csv",
                "diagnosis.csv",
                "lab_test.csv",
                "suspected.csv",
                "symptpmatic.csv",
+               "covariates.csv",
                "EvaluationCohort_e1/plpResults_main/performanceEvaluation.rds"
     )
     
