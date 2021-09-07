@@ -14,10 +14,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-#' Execute the cohort diagnostics
+#' Execute the cohort phenotype test
 #'
 #' @details
-#' This function executes the cohort diagnostics.
+#' This function executes the cohorts phenotype test.
 #'
 #' @param connectionDetails    An object of type \code{connectionDetails} as created using the
 #'                             \code{\link[DatabaseConnector]{createConnectionDetails}} function in the
@@ -142,7 +142,7 @@ runPhenoTest <- function(connectionDetails,
                                              oracleTempSchema = oracleTempSchema,
                                              cohort_database_schema = cohortDatabaseSchema,
                                              cohort_table = cohortTable,
-                                             limit_criteria = 'cohort_definition_id IN (1, 3, 5, 7, 9)')
+                                             limit_criteria = 'cohort_definition_id IN (1, 3)')
     counts <- DatabaseConnector::querySql(connection, sql)
     names(counts) <- SqlRender::snakeCaseToCamelCase(names(counts))
     counts$countPersons[counts$countPersons < minCellCount] <- -minCellCount
@@ -153,7 +153,58 @@ runPhenoTest <- function(connectionDetails,
     counts <- counts %>% 
       mutate(combinationName = map_chr(comboId, ~extract_bitsum(.x, str_remove(cohortsToCreate$name, '_ema_phenos__'))))
     
-    write.csv(counts, file.path(outputFolder, "CohortOverlap.csv"))
+   # browser()
+    final <- counts
+    
+    sql <- SqlRender::loadRenderTranslateSql(sqlFilename = "OverlapCounts.sql",
+                                             packageName = "covidPhenotypesTest",
+                                             dbms = attr(connection, "dbms"),
+                                             oracleTempSchema = oracleTempSchema,
+                                             cohort_database_schema = cohortDatabaseSchema,
+                                             cohort_table = cohortTable,
+                                             limit_criteria = 'cohort_definition_id IN (1, 5)')
+    counts <- DatabaseConnector::querySql(connection, sql)
+    names(counts) <- SqlRender::snakeCaseToCamelCase(names(counts))
+    counts$countPersons[counts$countPersons < minCellCount] <- -minCellCount
+
+    counts <- counts %>% 
+      mutate(combinationName = map_chr(comboId, ~extract_bitsum(.x, str_remove(cohortsToCreate$name, '_ema_phenos__'))))
+    
+    final <- rbind(final, counts)
+    
+    sql <- SqlRender::loadRenderTranslateSql(sqlFilename = "OverlapCounts.sql",
+                                             packageName = "covidPhenotypesTest",
+                                             dbms = attr(connection, "dbms"),
+                                             oracleTempSchema = oracleTempSchema,
+                                             cohort_database_schema = cohortDatabaseSchema,
+                                             cohort_table = cohortTable,
+                                             limit_criteria = 'cohort_definition_id IN (1, 7)')
+    counts <- DatabaseConnector::querySql(connection, sql)
+    names(counts) <- SqlRender::snakeCaseToCamelCase(names(counts))
+    counts$countPersons[counts$countPersons < minCellCount] <- -minCellCount
+    
+    counts <- counts %>% 
+      mutate(combinationName = map_chr(comboId, ~extract_bitsum(.x, str_remove(cohortsToCreate$name, '_ema_phenos__'))))
+    
+    final <- rbind(final, counts)
+    
+    sql <- SqlRender::loadRenderTranslateSql(sqlFilename = "OverlapCounts.sql",
+                                             packageName = "covidPhenotypesTest",
+                                             dbms = attr(connection, "dbms"),
+                                             oracleTempSchema = oracleTempSchema,
+                                             cohort_database_schema = cohortDatabaseSchema,
+                                             cohort_table = cohortTable,
+                                             limit_criteria = 'cohort_definition_id IN (1, 9)')
+    counts <- DatabaseConnector::querySql(connection, sql)
+    names(counts) <- SqlRender::snakeCaseToCamelCase(names(counts))
+    counts$countPersons[counts$countPersons < minCellCount] <- -minCellCount
+    
+    counts <- counts %>% 
+      mutate(combinationName = map_chr(comboId, ~extract_bitsum(.x, str_remove(cohortsToCreate$name, '_ema_phenos__'))))
+    
+    final <- rbind(final, counts)
+    
+    write.csv(final, file.path(outputFolder, "CohortOverlap.csv"))
 
   }
   
