@@ -29,7 +29,7 @@
 				"items" : [
 					{
 						"concept" : {
-							"CONCEPT_ID" : 37310282,
+							"CONCEPT_ID" : 3.731028e+07,
 							"CONCEPT_NAME" : "Severe acute respiratory syndrome coronavirus 2 detected",
 							"STANDARD_CONCEPT" : "N",
 							"STANDARD_CONCEPT_CAPTION" : "Non-Standard",
@@ -71,7 +71,7 @@
 					},
 					{
 						"concept" : {
-							"CONCEPT_ID" : 37310281,
+							"CONCEPT_ID" : 3.731028e+07,
 							"CONCEPT_NAME" : "Severe acute respiratory syndrome coronavirus 2 not detected",
 							"STANDARD_CONCEPT" : "N",
 							"STANDARD_CONCEPT_CAPTION" : "Non-Standard",
@@ -96,7 +96,7 @@
 				"items" : [
 					{
 						"concept" : {
-							"CONCEPT_ID" : 37311061,
+							"CONCEPT_ID" : 3.731106e+07,
 							"CONCEPT_NAME" : "COVID-19",
 							"STANDARD_CONCEPT" : "S",
 							"STANDARD_CONCEPT_CAPTION" : "Standard",

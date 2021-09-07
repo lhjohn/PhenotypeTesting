@@ -1344,7 +1344,7 @@
 					},
 					{
 						"concept" : {
-							"CONCEPT_ID" : 44809208,
+							"CONCEPT_ID" : 4.480921e+07,
 							"CONCEPT_NAME" : "Maximum body temperature",
 							"STANDARD_CONCEPT" : "S",
 							"STANDARD_CONCEPT_CAPTION" : "Standard",
@@ -1656,7 +1656,7 @@
 					},
 					{
 						"concept" : {
-							"CONCEPT_ID" : 43530714,
+							"CONCEPT_ID" : 4.353071e+07,
 							"CONCEPT_NAME" : "Sensory disorder of smell and/or taste",
 							"STANDARD_CONCEPT" : "S",
 							"STANDARD_CONCEPT_CAPTION" : "Standard",
