@@ -1,13 +1,7 @@
 covidPhenotypesTest
 =========
   
-This is a package to test 5 potential phenotype definitions for COVID-19: 
-
-- Diagnosis confirmed  
-- Laboratory confirmed 
-- Diagnosis or laboratory confirmed
-- Symptomatic COVID-19 
-- Suspected COVID-19 
+This is version 2 of the pheValuator package for the eCore covid project
 
 The main function of the package is to assess the above phenotypes by calculating their incidence over time (monthly), overlap and by running [PheValuator](https://github.com/OHDSI/PheValuator). These analysis can be executed using the runscript found in `extras/CodeToRun.R`. For a preliminary assessment of the phenotypes on your database,  [CohortDiagnostics](https://github.com/OHDSI/CohortDiagnostics) can be run using the runscript found in `extras/CodeToRunCohortDiagnostics.R`.
 
@@ -15,10 +9,15 @@ Steps to run
 ==================
 
 1. After downloading this repository and opening the .Rproj file in RStudio, you should be prompted to build a local library using the `renv` package.  Running `renv::restore()` will build a local library containing all dependencies and versions. 
+2. Make sure you have installed at least the following packages:
+remotes::install_github("OHDSI/PheValuator")
+remotes::install_github("OHDSI/CohortDiagnostics")
+remotes::install_github("OHDSI/OhdsiRTools")
+install.packages("xlsx")
 
-2. Build the package using Build-->Install and restart. 
+3. Build the package using Build-->Install and restart. 
 
-3. Open `extras/CodeToRun.R` and complete. The parameters should be similar to those used in other OHDSI studies: 
+4. Open `extras/CodeToRun.R` and complete. The parameters should be similar to those used in other OHDSI studies: 
 
 - <b>outputFolder</b>:  a directory which output files can be written to 
 - <b>andromedaTempFolder</b>: a directory where temporary files can be written  
