@@ -1,7 +1,4 @@
-
-
-library(PheValuator)
-
+#' @export
 runPhenoTest <- function(connectionDetails,
                          cdmDatabaseSchema,
                          cohortDatabaseSchema = cdmDatabaseSchema,
