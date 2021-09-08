@@ -45,4 +45,4 @@ covidPhenotypesTest::runPhenoTest(
 )
 
 ## Export summary results to share with Iqvia
-exportPhenoResults(outputFolder)
+#exportPhenoResults(outputFolder)
