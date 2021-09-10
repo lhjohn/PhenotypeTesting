@@ -17,6 +17,8 @@ runPhenoTest <- function(connectionDetails,
   if (!file.exists(outputFolder))
     dir.create(outputFolder, recursive = TRUE)
   
+  outFolder <- outputFolder
+  
   connection <- DatabaseConnector::connect(connectionDetails)
   
   if (createCohorts) {
