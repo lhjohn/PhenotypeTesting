@@ -1,5 +1,6 @@
 # Load the package
 library(covidPhenotypesTest)
+library(openxlsx)
 
 # IF you see an Error: database or disk is full error, consider downgrading Andromeda using below:
 #remotes::install_github("OHDSI/Andromeda",ref="b3cd1d50605c3344faa0f15f57f930e0666f3519")
@@ -25,6 +26,10 @@ cdmDatabaseSchema <-
 cohortDatabaseSchema <- 
 cohortTable <- 
 
+databaseId <- 
+databaseName <-
+databaseDescription <-
+
 # Run phenotype analysis
 covidPhenotypesTest::runPhenoTest(
   connectionDetails = connectionDetails,
@@ -37,7 +42,6 @@ covidPhenotypesTest::runPhenoTest(
   databaseName = databaseName,
   databaseDescription = databaseDescription,
   createCohorts = T,
-  createBaseCohorts = T,
   runSimpleMonthly = T,
   runOverlap = T,
   runPhevaluator = T,
